@@ -8,8 +8,6 @@ pipeline {
 
     environment {
         SNAP_REPO = 'vprofile-snapshot'
-        NEXUS_USER = 'admin'
-        NEXUS_PASS = 'admin123'
         RELEASE_REPO = 'vprofile-release'
         CENTRAL_REPO = 'vpro-maven-central'
         NEXUSIP = '172.31.29.120'
@@ -21,18 +19,7 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
-            steps {
-                sh 'mvn -s settings.xml -DskipTests install'
-            }
-            post {
-                success {
-                    echo 'Now Archiving...'
-                    archiveArtifacts artifacts: '**/target/*.war'
-                }
-            }
-        }
-
+        
        	stage('UNIT TEST'){
             steps {
                 sh 'mvn -s settings.xml test'
@@ -76,6 +63,18 @@ pipeline {
             }
         }
         }
+
+	stage('Build') {
+            steps {
+                sh 'mvn -s settings.xml -DskipTests install'
+            }
+            post {
+                success {
+                    echo 'Now Archiving...'
+                    archiveArtifacts artifacts: '**/target/*.war'
+                }
+            }
+        }   
 
         stage("UploadArtifact"){
             steps{
